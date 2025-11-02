@@ -1,51 +1,58 @@
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-env/
+# Environnements virtuels
 venv/
+env/
 ENV/
-.venv
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
 
-# IDE
+# IDE et éditeurs
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
+.DS_Store
 
 # Git
 .git/
 .gitignore
+.gitattributes
 
-# Data (optionnel - à commenter si vous voulez inclure les données dans l'image)
-data/*.csv
-data/*.backup_*
-data/metadata.json
-
-# Models (optionnel - à commenter si vous voulez inclure les modèles dans l'image)
-models/*.pkl
-models/*.json
-
-# Logs
-logs/*.log
-*.log
+# Docker
+.dockerignore
+Dockerfile
+docker-compose*.yml
 
 # Documentation
 README.md
+*.md
 docs/
 
 # Tests
 tests/
-*.pytest_cache/
+test_*.py
+*_test.py
+.pytest_cache/
+.coverage
 
-# OS
-.DS_Store
-Thumbs.db
+# Logs et caches
+*.log
+logs/
+.cache/
+*.tmp
 
-# Docker
-Dockerfile
-docker-compose.yml
-.dockerignore
+# Données sensibles (à adapter selon vos besoins)
+.env
+.env.local
+*.key
+*.pem
+secrets/
+
+# Fichiers temporaires
+tmp/
+temp/
+*.bak

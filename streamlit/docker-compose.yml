@@ -1,9 +1,11 @@
-version: '3.8'
+version: "3.8"
 
 services:
   # Service Streamlit (Interface utilisateur)
   streamlit:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: greentech-streamlit
     ports:
       - "8501:8501"
@@ -11,22 +13,29 @@ services:
       - ./data:/app/data
       - ./models:/app/models
       - ./logs:/app/logs
+      # Volume pour le code en développement (commenté en production)
+      # - ./pages:/app/pages
+      # - ./app.py:/app/app.py
     environment:
       - SERVICE_MODE=streamlit
       - PYTHONUNBUFFERED=1
-    command: streamlit run app.py --server.address=0.0.0.0 --server.port=8501
+      - STREAMLIT_SERVER_HEADLESS=true
+      - STREAMLIT_BROWSER_GATHER_USAGE_STATS=false
     restart: unless-stopped
     networks:
       - greentech-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8501"]
+      test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
       interval: 30s
       timeout: 10s
+      start_period: 40s
       retries: 3
 
-  # Service FastAPI (API)
+  # Service FastAPI (API) - Optionnel
   api:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: greentech-api
     ports:
       - "8000:8000"
@@ -37,7 +46,6 @@ services:
     environment:
       - SERVICE_MODE=api
       - PYTHONUNBUFFERED=1
-    command: uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload
     restart: unless-stopped
     networks:
       - greentech-network
@@ -45,6 +53,7 @@ services:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
       timeout: 10s
+      start_period: 30s
       retries: 3
 
 networks:
@@ -53,5 +62,8 @@ networks:
 
 volumes:
   data:
+    driver: local
   models:
+    driver: local
   logs:
+    driver: local

@@ -4,6 +4,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import os
+from pages.about import footer
 
 def show():
     # Bandeau principal avec image de fond
@@ -24,7 +25,7 @@ def show():
                 margin-bottom: 2rem;
             ">
                 <h1 style="color:white; font-size:52px; margin-bottom: 1rem;">
-                    🌱 Bienvenue sur GreenTech Solutions Rhône
+                    🌿 Bienvenue sur GreenTech Solutions Rhône
                 </h1>
                 <p style="color:white; font-size:22px; opacity: 0.95;">
                     Analyse et comparaison énergétique simplifiée pour vos logements
@@ -45,7 +46,7 @@ def show():
                 margin-bottom: 2rem;
             ">
                 <h1 style="color:white; font-size:52px; margin-bottom: 1rem;">
-                    🌱 Bienvenue sur GreenTech Solutions Rhône
+                    🌿 Bienvenue sur GreenTech Solutions Rhône
                 </h1>
                 <p style="color:white; font-size:22px; opacity: 0.95;">
                     Analyse et comparaison énergétique simplifiée pour vos logements
@@ -63,33 +64,33 @@ def show():
         
         with col1:
             st.metric(
-                label="🏠 Logements analysés",
+                label=" Logements analysés",
                 value=f"{len(df):,}",
-                delta="Base de données complète"
+                #delta="Base de données complète"
             )
         
         with col2:
             conso_moy = df['conso_5_usages_par_m2_ef'].mean()
             st.metric(
-                label="⚡ Consommation moyenne",
+                label=" Consommation moyenne",
                 value=f"{conso_moy:.0f} kWh/m²",
-                delta=f"{conso_moy - 180:.0f} vs. objectif"
+                #delta=f"{conso_moy - 180:.0f} vs. objectif"
             )
         
         with col3:
             cout_moy = df['cout_total_5_usages'].mean()
             st.metric(
-                label="💰 Coût moyen annuel",
+                label=" Coût moyen annuel",
                 value=f"{cout_moy:,.0f} €",
-                delta="Par logement"
+                #delta="Par logement"
             )
         
         with col4:
             ges_moy = df['emission_ges_5_usages'].mean()
             st.metric(
-                label="🌍 Émissions GES moy.",
+                label=" Émissions GES moy.",
                 value=f"{ges_moy:,.0f} kg CO₂",
-                delta="Par an"
+                #delta="Par an"
             )
         
         st.markdown("---")
@@ -98,7 +99,7 @@ def show():
         col1, col2 = st.columns(2)
         
         with col1:
-            st.markdown("### 📊 Répartition des étiquettes DPE")
+            st.markdown("###  Répartition des étiquettes DPE")
             etiquette_counts = df['etiquette_dpe'].value_counts().sort_index()
             
             colors_dpe = {
@@ -124,7 +125,7 @@ def show():
             st.plotly_chart(fig_pie, use_container_width=True)
         
         with col2:
-            st.markdown("### ⚡ Consommation par type d'énergie")
+            st.markdown("###  Consommation par type d'énergie")
             
             energie_stats = df.groupby('type_energie_recodee').agg({
                 'conso_5_usages_par_m2_ef': 'mean',
@@ -154,28 +155,28 @@ def show():
             st.plotly_chart(fig_bar, use_container_width=True)
         
     except FileNotFoundError:
-        st.warning("⚠️ Fichier de données introuvable. Utilisation des données de démonstration.")
+        st.warning(" Fichier de données introuvable. Utilisation des données de démonstration.")
     except Exception as e:
         st.error(f"Erreur lors du chargement des données : {e}")
 
     st.markdown("---")
 
     # Fonctionnalités
-    st.markdown("### 🎯 Fonctionnalités de l'application")
+    st.markdown("###  Fonctionnalités de l'application")
     
     col1, col2 = st.columns(2)
     
     with col1:
         st.markdown("""
         <div style="background: white; padding: 1.5rem; border-radius: 10px; border-left: 4px solid #6B8E23; margin-bottom: 1rem;">
-            <h4>📈 Tableau de bord interactif</h4>
+            <h4> Tableau de bord interactif</h4>
             <p>Visualisez et filtrez les données en temps réel par type de bâtiment, code postal et étiquette DPE</p>
         </div>
         """, unsafe_allow_html=True)
         
         st.markdown("""
         <div style="background: white; padding: 1.5rem; border-radius: 10px; border-left: 4px solid #2E8B57;">
-            <h4>🔍 Analyse approfondie</h4>
+            <h4> Analyse approfondie</h4>
             <p>Graphiques détaillés des consommations par zone géographique et type d'énergie</p>
         </div>
         """, unsafe_allow_html=True)
@@ -183,18 +184,17 @@ def show():
     with col2:
         st.markdown("""
         <div style="background: white; padding: 1.5rem; border-radius: 10px; border-left: 4px solid #FF9800; margin-bottom: 1rem;">
-            <h4>⚖️ Comparaison</h4>
-            <p>Comparez deux logements côte à côte pour identifier les économies potentielles</p>
+            <h4> API</h4>
+            <p>Connectez vos applications pour automatiser le partage et la mise à jour des données.</p>
         </div>
         """, unsafe_allow_html=True)
         
         st.markdown("""
         <div style="background: white; padding: 1.5rem; border-radius: 10px; border-left: 4px solid #9C27B0;">
-            <h4>🔮 Prédiction IA</h4>
+            <h4> Prédiction IA </h4>
             <p>Estimez l'étiquette DPE et les coûts énergétiques d'un logement grâce au machine learning</p>
         </div>
         """, unsafe_allow_html=True)
 
     st.markdown("---")
     
-    st.info("💡 **Astuce** : Utilisez le menu de navigation à gauche pour explorer les différentes sections de l'application !")
