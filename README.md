@@ -1,10 +1,6 @@
-<<<<<<< HEAD
 # 🌿 GreenTech Solutions - Dashboard Énergétique
 
 Application Streamlit d'analyse des données énergétiques ADEME et Enedis.
-=======
-# 💡 GreenTech Solutions
-
 > _Modélisation et visualisation des performances énergétiques des logements en France_
 >
 > Projet réalisé dans le cadre du Master 2 **SISE – Statistique et Informatique pour la Science des donnéEs (Lyon 2)**  
@@ -48,17 +44,12 @@ Le projet couvre toutes les étapes du cycle de la donnée :
 -  **Métriques des modèles** : Endpoint `/models/metrics`
 -  **Rafraîchissement des données** : Endpoint `/data/refresh`
 -  **Réentraînement** : Endpoint `/models/retrain`
->>>>>>> 6d7b8eb60e07cb371d6f937da3311d6eed4bfc80
 
 ##  Prérequis
 
 - Docker Desktop installé
 - Docker Compose
 - 4 GB RAM minimum
-
-<<<<<<< HEAD
-## 🚀 Installation rapide
-=======
 ---
 
 ##  Structure du projet
@@ -186,10 +177,7 @@ greentech-solutions/
 | Vidéo démo | 🔗 _[Lien à venir]_ |
 
 ---
-
-
 ## 🛠️ Installation
->>>>>>> 6d7b8eb60e07cb371d6f937da3311d6eed4bfc80
 
 ### Option 1 : Avec Docker (Recommandé)
 
@@ -226,8 +214,6 @@ pip install -r requirements.txt
 # 3. Lancer Streamlit
 streamlit run app.py
 ```
-
-<<<<<<< HEAD
 ## 📁 Structure du projet
 
 ```
@@ -247,7 +233,6 @@ greentech-project/
 ## 🛠️ Commandes utiles
 
 ### Avec Make
-=======
 ### Option 2 : Avec Docker (Recommandé)
 
 ```bash
@@ -275,7 +260,6 @@ Une fois lancé :
 1. Aller dans " Rafraîchir données"
 2. Choisir le mode (nouveaux DPE uniquement ou rechargement complet)
 3. Cliquer sur "Lancer le rafraîchissement"
->>>>>>> 6d7b8eb60e07cb371d6f937da3311d6eed4bfc80
 
 ```bash
 make build          # Construire les images
@@ -284,8 +268,6 @@ make logs           # Voir les logs
 make down           # Tout arrêter
 make clean          # Nettoyer
 ```
-
-<<<<<<< HEAD
 ### Avec Docker Compose
 
 =======
@@ -297,7 +279,6 @@ make clean          # Nettoyer
 3. Cliquer sur "Lancer l'entraînement"
 
 ### Via l'API
->>>>>>> 6d7b8eb60e07cb371d6f937da3311d6eed4bfc80
 ```bash
 docker-compose up -d streamlit       # Démarrer
 docker-compose logs -f streamlit     # Logs en temps réel
@@ -364,7 +345,7 @@ Placez vos fichiers CSV dans le dossier `data/` :
 
 - `donnees_ademe_finales_nettoyees_69_final_pret.csv`
 - `donnees_enedis_finales_69.csv`
-=======
+
 ## 📊 Modèles de Machine Learning
 
 ### Modèle de Classification
@@ -376,7 +357,6 @@ Placez vos fichiers CSV dans le dossier `data/` :
 - **Algorithme** : DecisionTree Regressor
 - **Objectif** : Prédire le coût total des 5 usages (€/an)
 - **Performance** : R² > 0.97
->>>>>>> 6d7b8eb60e07cb371d6f937da3311d6eed4bfc80
 
 ## 👥 Contribution
 
@@ -415,4 +395,3 @@ Pour toute question, contactez l'équipe GreenTech Solutions : franckdena@gmail.
 
 **Version** : 1.0.0  
 **Dernière mise à jour** : 2025
->>>>>>> 6d7b8eb60e07cb371d6f937da3311d6eed4bfc80
