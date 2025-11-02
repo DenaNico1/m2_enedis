@@ -3,14 +3,17 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+from pages.analysis import load_data
+from pages.about import footer
+
 
 def show():
-    st.title("⚡ Données Enedis - Consommation électrique")
+    st.title(" Données Enedis - Consommation électrique")
     st.markdown("### Analyse complémentaire des données de consommation électrique")
     
     try:
         # Charger les données
-        df_enedis = pd.read_csv("data/donnees_enedis_finales_69.csv")
+        df_enedis = load_data("data/donnees_enedis_finales_69.csv")
         
         # Convertir les codes postaux en string et formater correctement
         # Gérer les valeurs manquantes d'abord
@@ -23,17 +26,17 @@ def show():
         
         col1, col2, col3 = st.columns(3)
         with col1:
-            st.metric("📅 Années disponibles", f"{min(annees_dispo)} - {max(annees_dispo)}")
+            st.metric(" Années disponibles", f"{min(annees_dispo)} - {max(annees_dispo)}")
         with col2:
-            st.metric("📍 Adresses", f"{df_enedis['adresse_norm'].nunique():,}")
+            st.metric(" Adresses", f"{df_enedis['adresse_norm'].nunique():,}")
         with col3:
             total_logements = df_enedis['Nombre de logements'].sum()
-            st.metric("🏠 Total logements", f"{int(total_logements):,}")
+            st.metric(" Total logements", f"{int(total_logements):,}")
         
         st.markdown("---")
         
         # Filtres
-        st.markdown("#### 🔍 Filtres")
+        st.markdown("####  Filtres")
         col1, col2 = st.columns(2)
         
         with col1:
@@ -61,11 +64,49 @@ def show():
         
         # Onglets
         tab1, tab2, tab3, tab4 = st.tabs([
-            "📊 Vue d'ensemble",
-            "🗺️ Carte interactive",
-            "📈 Analyses comparatives",
-            "📋 Données détaillées"
+            " Vue d'ensemble",
+            " Carte interactive",
+            " Analyses comparatives",
+            " Données détaillées"
         ])
+        st.markdown("""
+<style>
+/* Conteneur global des tabs */
+.stTabs [data-baseweb="tab-list"] {
+    gap: 10px;
+}
+
+/* Style général des onglets */
+.stTabs [data-baseweb="tab"] {
+    background-color: #e8f5e9;   /* vert clair */
+    color: #1b5e20;              /* texte vert foncé */
+    border-radius: 6px 6px 0 0;
+    padding: 8px 16px;
+    font-weight: 500;
+    font-size: 15px;
+    border: none !important;
+    transition: all 0.3s ease;
+    border-bottom: 3px solid transparent !important; /* 🔥 enlève la barre orange */
+}
+
+/*  Onglet actif — même couleur que la navbar */
+.stTabs [aria-selected="true"] {
+    background-color: #1b5e20 !important;  /* vert foncé */
+    color: white !important;
+    font-weight: 600;
+    border: none !important;
+    border-bottom: 3px solid #1b5e20 !important;  /* barre verte discrète */
+}
+
+/*  Hover — reste vert, pas d’orange */
+.stTabs [data-baseweb="tab"]:hover {
+    background-color: #2e7d32 !important;  /* vert moyen */
+    color: white !important;
+    border-bottom: 3px solid #e8f5e9 !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
         
         # TAB 1 : Vue d'ensemble
         with tab1:
@@ -118,7 +159,7 @@ def show():
                 st.plotly_chart(fig_cat, use_container_width=True)
             
             # Statistiques par commune
-            st.markdown("#### 🏘️ Top 10 communes par consommation totale")
+            st.markdown("####  Top 10 communes par consommation totale")
             
             commune_stats = df_filtered.groupby('code_postal').agg({
                 'Consommation annuelle totale de l\'adresse (MWh)': 'sum',
@@ -148,7 +189,7 @@ def show():
         
         # TAB 2 : Carte interactive
         with tab2:
-            st.markdown("#### 🗺️ Répartition géographique des consommations")
+            st.markdown("####  Répartition géographique des consommations")
             
             if 'latitude' in df_filtered.columns and 'longitude' in df_filtered.columns:
                 # Limiter pour performance
@@ -158,6 +199,7 @@ def show():
                     df_map,
                     lat='latitude',
                     lon='longitude',
+                    zoom=10,
                     size='Nombre de logements',
                     color='Consommation annuelle moyenne par logement de l\'adresse (MWh)',
                     hover_name='adresse_norm',
@@ -168,7 +210,7 @@ def show():
                         'longitude': False
                     },
                     color_continuous_scale='Reds',
-                    zoom=10,
+                    #zoom=5,
                     height=600
                 )
                 
@@ -179,13 +221,13 @@ def show():
                 
                 st.plotly_chart(fig_map, use_container_width=True)
                 
-                st.info(f"💡 Carte limitée à {len(df_map)} adresses pour la performance. Taille des bulles = nombre de logements, couleur = consommation moyenne.")
+                st.info(f" Carte limitée à {len(df_map)} adresses pour la performance. Taille des bulles = nombre de logements, couleur = consommation moyenne.")
             else:
                 st.warning("Données de géolocalisation non disponibles.")
         
         # TAB 3 : Analyses comparatives
         with tab3:
-            st.markdown("#### 📊 Analyses comparatives")
+            st.markdown("####  Analyses comparatives")
             
             col1, col2 = st.columns(2)
             
@@ -232,7 +274,7 @@ def show():
             
             # Evolution temporelle si plusieurs années
             if len(annees_dispo) > 1:
-                st.markdown("##### 📈 Évolution temporelle de la consommation")
+                st.markdown("#####  Évolution temporelle de la consommation")
                 
                 evolution = df_enedis[
                     df_enedis['code_postal'].isin(cp_selected)
@@ -273,7 +315,7 @@ def show():
         
         # TAB 4 : Données détaillées
         with tab4:
-            st.markdown("#### 📋 Tableau des données")
+            st.markdown("####  Tableau des données")
             
             # Renommer les colonnes pour affichage
             df_display = df_filtered[[
@@ -301,7 +343,7 @@ def show():
             with col2:
                 csv = df_filtered.to_csv(index=False).encode('utf-8')
                 st.download_button(
-                    label="📥 Télécharger CSV",
+                    label=" Télécharger CSV",
                     data=csv,
                     file_name=f"enedis_{annee_selectionnee}.csv",
                     mime="text/csv"
@@ -310,26 +352,27 @@ def show():
         st.markdown("---")
         
         # Insights
-        st.markdown("### 💡 Insights clés")
+        st.markdown("###  Insights clés")
         
         col1, col2, col3 = st.columns(3)
         
         with col1:
             conso_max = df_filtered['Consommation annuelle moyenne par logement de l\'adresse (MWh)'].max()
-            st.info(f"🔥 **Conso max** : {conso_max:.2f} MWh/logement")
+            st.info(f" **Conso max** : {conso_max:.2f} MWh/logement")
         
         with col2:
             nb_max = df_filtered['Nombre de logements'].max()
-            st.info(f"🏢 **Plus grande adresse** : {int(nb_max)} logements")
+            st.info(f" **Plus grande adresse** : {int(nb_max)} logements")
         
         with col3:
             conso_totale = df_filtered['Consommation annuelle totale de l\'adresse (MWh)'].sum()
-            st.info(f"⚡ **Conso totale zone** : {conso_totale:,.0f} MWh")
+            st.info(f" **Conso totale zone** : {conso_totale:,.0f} MWh")
         
     except FileNotFoundError:
-        st.error("❌ Le fichier des données Enedis est introuvable.")
-        st.info("📂 Placez le fichier dans `data/donnees_enedis.csv`")
+        st.error(" Le fichier des données Enedis est introuvable.")
+        st.info("  Placez le fichier dans `data/donnees_enedis.csv`")
     except Exception as e:
         st.error(f"Une erreur s'est produite : {e}")
         import traceback
         st.code(traceback.format_exc())
+    

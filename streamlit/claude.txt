@@ -1,0 +1,764 @@
+mon graphe il n 'est pas lisible du tout et en plus il ya des emoji j'aime pas ameliore le bien plzJe vais améliorer ce diagramme de Sankey pour le rendre plus lisible et professionnel. Voici les améliorations :UntitledTexte                 # Créer les nœuds et liens pour le Sankey - AMÉLIORATION
+                nodes = []
+                node_dict = {}
+                links = {'source': [], 'target': [], 'value': [], 'color': []}
+                
+                def getJ'ai amélioré le diagramme de Sankey avec :
+✅ Suppression des emojis - Labels propres et professionnels
+✅ Meilleure lisibilité :
+
+Nœuds plus grands et espacés (pad=20, thickness=25)
+Bordures blanches pour mieux distinguer les éléments
+Filtre des flux < 1% pour éviter le fouillis
+
+✅ Couleurs cohérentes :
+
+Énergies : bleu (électricité), rouge (gaz), gris (fioul), orange (réseau urbain)
+Bâtiments : nuances de vert
+DPE : code couleur officiel (A=vert foncé → G=rouge foncé)
+
+✅ Infobulles améliorées - Affichage clair au survol avec le nombre de logements
+Le graphique devrait maintenant être beaucoup plus propre et facile à lire ! 📊RéessayerMdonne tout le codePage Enedis - Dashboard StreamlitCode ∙ Version 2 import streamlit as st
+import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+from pages.analysis import load_data
+from pages.about import footer
+
+
+def show():
+    st.title("⚡ DonnéVoilà ! J'ai regénéré tout le code complet avec toutes les améliorations apportées au diagramme de Sankey :
+✅ Améliorations principales :
+
+Suppression complète des emojis dans les labels du Sankey
+Palette de couleurs professionnelle et cohérente
+Nœuds plus grands et mieux espacés
+Filtrage des flux < 1% pour éviter le fouillis
+Infobulles améliorées et informatives
+Conversion correcte des couleurs HEX en RGBA
+
+Le code est maintenant prêt à être utilisé et le diagramme devrait être beaucoup plus lisible ! 🎯Réessayerdocker-compose.yml57 lignesymldocker-entrypoint.sh23 lignesshrequirements.txt87 lignestxtMaide moi à dockeriser mon projet streamlit qui marche très bien en local. les les fichiers suivants : et le dockerfile :"# Image de base Python
+FROM python:3.12-slim
+
+# Définir le répertoire de travail
+WORKDIR /app
+
+# Copier les fichiers de requirements
+COPY requirements.txt .
+
+# Installer les dépendances système nécessaires
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Installer les dépendances Python
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
+
+# Copier tout le code de l'application
+COPY . .
+
+# Créer les dossiers nécessaires
+RUN mkdir -p data models logs
+
+# Exposer les ports
+# 8501 pour Streamlit
+# 8000 pour FastAPI
+EXPOSE 8501 8000
+
+# Variables d'environnement
+ENV PYTHONUNBUFFERED=1
+ENV STREAMLIT_SERVER_PORT=8501
+ENV STREAMLIT_SERVER_ADDRESS=0.0.0.0
+
+# Script de démarrage
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+
+ENTRYPOINT ["/docker-entrypoint.sh"]"Afficher plusJe vais vous aider à corriger et améliorer votre configuration Docker. Voici les fichiers optimisés :Dockerfile optimiséCode # Image de base Python
+FROM python:3.12-slim
+
+# Définir le répertoire de travail
+WORKDIR /app
+
+# Installer les dépendances système nécessaires
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    curl \
+    git \
+    && rm -rf /var/liParfait ! Voici votre projet Streamlit dockerisé avec les améliorations suivantes :
+📦 Fichiers créés/améliorés
+1. Dockerfile optimisé
+
+✅ Installation de git (nécessaire pour GitPython dans requirements)
+✅ Healthcheck Streamlit intégré
+✅ Variables d'environnement Streamlit configurées
+✅ Permissions correctes pour les dossiers
+
+2. docker-compose.yml amélioré
+
+✅ Healthcheck avec start_period pour laisser le temps au démarrage
+✅ Volumes nommés pour data/models/logs
+✅ Configuration réseau propre
+
+3. docker-entrypoint.sh renforcé
+
+✅ Vérification et création automatique des dossiers
+✅ Messages informatifs détaillés
+✅ Désactivation du file watcher (pour Docker)
+✅ Gestion d'erreurs améliorée
+
+4. .dockerignore (nouveau)
+
+✅ Exclut les fichiers inutiles pour réduire la taille de l'image
+✅ Protège les fichiers sensibles
+
+5. Makefile (nouveau)
+
+✅ Commandes simplifiées pour gérer Docker
+✅ Aide intégrée avec descriptions
+
+
+🚀 Utilisation
+Démarrage rapide
+bash# Avec Make (recommandé)
+make build      # Construire l'image
+make streamlit  # Lancer Streamlit seul
+make logs       # Voir les logs
+
+# Sans Make
+docker-compose build
+docker-compose up -d streamlit
+docker-compose logs -f streamlit
+Commandes principales
+bashmake help           # Liste toutes les commandes
+make streamlit      # Lancer Streamlit sur :8501
+make api           # Lancer l'API sur :8000
+make logs          # Voir les logs en temps réel
+make restart       # Redémarrer tout
+make clean         # Tout nettoyer
+Accès
+
+📊 Streamlit : http://localhost:8501
+🔌 API : http://localhost:8000 (si activée)
+
+
+🔧 Points importants
+
+Données persistantes : Les dossiers data/, models/, logs/ sont montés en volumes
+Hot reload : Désactivé dans Docker (mode production)
+Healthcheck : Vérifie automatiquement que Streamlit répond
+Logs : Accessibles via make logs-streamlit
+
+
+🐛 Si problème au démarrage
+bash# Vérifier les logs
+docker-compose logs streamlit
+
+# Vérifier la santé
+make health
+
+# Reconstruire complètement
+make rebuild
+Note : Assurez-vous que les dossiers data/, models/, et logs/ existent à la racine de votre projet, ou ils seront créés automatiquement.
+Besoin d'aide pour tester ? 🚀RéessayerMcomment les lancer pour faire fonctionner🚀 Guide de démarrage pas à pas
+Étape 1 : Préparation ✅
+Vérifiez que vous avez bien tous les fichiers à la racine de votre projet :
+bashvotre-projet/
+├── Dockerfile
+├── docker-compose.yml
+├── docker-entrypoint.sh
+├── .dockerignore
+├── requirements.txt
+├── app.py
+├── pages/
+│   └── (vos pages streamlit)
+└── data/
+    └── (vos données CSV)
+Étape 2 : Rendre le script exécutable 🔧
+bash# Dans votre terminal, à la racine du projet
+chmod +x docker-entrypoint.sh
+
+Option A : Avec Make (Recommandé) 🎯
+Si vous avez créé le Makefile :
+bash# 1. Construire l'image Docker
+make build
+
+# 2. Lancer Streamlit
+make streamlit
+
+# 3. Voir les logs en temps réel (optionnel)
+make logs-streamlit
+✅ Votre application est maintenant accessible sur : http://localhost:8501
+
+Option B : Sans Make (Commandes Docker directes) 🐳
+bash# 1. Construire l'image Docker
+docker-compose build
+
+# 2. Lancer uniquement Streamlit
+docker-compose up -d streamlit
+
+# 3. Voir les logs (optionnel)
+docker-compose logs -f streamlit
+✅ Votre application est maintenant accessible sur : http://localhost:8501
+
+Commandes utiles 🛠️
+Avec Make
+bashmake help           # Voir toutes les commandes disponibles
+make logs           # Voir les logs en temps réel
+make restart        # Redémarrer les services
+make down           # Arrêter tout
+make ps             # Voir l'état des conteneurs
+make shell-streamlit # Ouvrir un terminal dans le conteneur
+Sans Make (Docker Compose)
+bashdocker-compose ps                    # Voir l'état
+docker-compose logs -f streamlit     # Voir les logs
+docker-compose restart streamlit     # Redémarrer
+docker-compose stop streamlit        # Arrêter
+docker-compose down                  # Tout arrêter et nettoyer
+docker-compose exec streamlit bash   # Terminal dans le conteneur
+
+Vérifier que ça fonctionne ✔️
+bash# Vérifier l'état du conteneur
+docker ps
+
+# Vous devriez voir quelque chose comme :
+# CONTAINER ID   IMAGE              STATUS          PORTS
+# abc123...      greentech-streamlit   Up 2 minutes   0.0.0.0:8501->8501/tcp
+Puis ouvrez votre navigateur : http://localhost:8501
+
+En cas de problème 🐛
+1. Voir les logs détaillés
+bashdocker-compose logs streamlit
+2. Reconstruire complètement
+bash# Avec Make
+make clean
+make build
+make streamlit
+
+# Sans Make
+docker-compose down -v
+docker-compose build --no-cache
+docker-compose up -d streamlit
+3. Vérifier que les ports ne sont pas déjà utilisés
+bash# Windows
+netstat -ano | findstr :8501
+
+# Linux/Mac
+lsof -i :8501
+Si le port 8501 est occupé, arrêtez le processus ou changez le port dans docker-compose.yml :
+yamlports:
+  - "8502:8501"  # Utilisez 8502 à la place
+
+Pour arrêter proprement 🛑
+bash# Avec Make
+make down
+
+# Sans Make
+docker-compose down
+
+Résumé : Commandes essentielles 📝
+ActionAvec MakeSans MakeConstruiremake builddocker-compose buildDémarrermake streamlitdocker-compose up -d streamlitLogsmake logs-streamlitdocker-compose logs -f streamlitArrêtermake downdocker-compose downRedémarrermake restartdocker-compose restart
+
+💡 Conseil : La première fois, la construction peut prendre 2-5 minutes (téléchargement des dépendances). Les démarrages suivants seront beaucoup plus rapides !
+Essayez maintenant et dites-moi si ça fonctionne ! 🚀Réessayermodou@MBOUP:/mnt/c/Users/mboup/Desktop/m2_project/m2_enedis/streamlit$ chmod +x docker-entrypoint.sh
+modou@MBOUP:/mnt/c/Users/mboup/Desktop/m2_project/m2_enedis/streamlit$ make build
+🔨 Construction des images Docker...
+docker-compose build
+Building streamlit
+[+] Building 925.3s (14/14) FINISHEpastedMLe problème est clair : le port 8501 est déjà utilisé par une autre instance de Streamlit qui tourne en local ! 🔴
+🔧 Solution : Arrêter l'instance locale
+Option 1 : Arrêter Streamlit local (Recommandé)
+bash# Trouver le processus qui utilise le port 8501
+netstat -ano | findstr :8501
+
+# Vous verrez quelque chose comme :
+# TCP    0.0.0.0:8501    0.0.0.0:0    LISTENING    12345
+
+# Tuer ce processus (remplacez 12345 par le vrai PID)
+taskkill /PID 12345 /F
+Ou plus simple, si vous avez un terminal Streamlit ouvert :
+
+Appuyez sur Ctrl+C dans le terminal où Streamlit tourne
+Fermez tous les terminaux qui pourraient exécuter streamlit run
+
+Puis relancez :
+bashdocker-compose up -d streamlit
+
+Option 2 : Changer le port Docker (Alternative)
+Si vous voulez garder votre Streamlit local ET le Docker en même temps :docker-compose.yml optimiséCode ∙ Version 2   streamlit:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: greentech-streamlit
+    ports:
+      - "8502:8501"  # Port externe changé pour éviter les conflitsSi vous prenez l'option 2, votre Docker Streamlit sera accessible sur : http://localhost:8502
+bash# Relancer avec le nouveau port
+docker-compose up -d streamlit
+
+✅ Vérification après résolution
+bash# 1. Vérifier que le conteneur tourne
+docker ps
+
+# 2. Voir les logs
+docker-compose logs -f streamlit
+
+# 3. Ouvrir dans le navigateur
+# Option 1 : http://localhost:8501
+# Option 2 : http://localhost:8502
+
+🎯 Ma recommandation
+Arrêtez votre Streamlit local et utilisez uniquement Docker. C'est plus propre et vous évite les conflits de ports.
+bash# 1. Fermez tous les terminaux avec Streamlit
+# 2. Vérifiez qu'il n'y a plus de processus sur le port 8501
+netstat -ano | findstr :8501
+
+# 3. Si rien ne s'affiche, relancez Docker
+docker-compose up -d streamlit
+
+# 4. Vérifiez les logs
+docker-compose logs -f streamlit
+```
+
+Vous devriez voir des messages comme :
+```
+🚀 Démarrage de GreenTech Solutions...
+📊 Démarrage de l'interface Streamlit...
+🌐 Accessible sur: http://localhost:8501
+Essayez ça et dites-moi ce que vous obtenez ! 🚀RéessayerMmodou@MBOUP:/mnt/c/Users/mboup/Desktop/m2_project/m2_enedis/streamlit$ docker-compose up -d streamlit
+Traceback (most recent call last):
+  File "/usr/bin/docker-compose", line 33, in <module>
+    sys.exit(load_entry_point('docker-compose==1.29.2', 'console_scripts', 'docker-compose')())
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/compose/cli/main.py", line 81, in main
+    command_func()
+  File "/usr/lib/python3/dist-packages/compose/cli/main.py", line 200, in perform_command
+    project = project_from_options('.', options)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/compose/cli/command.py", line 60, in project_from_options
+    return get_project(
+           ^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/compose/cli/command.py", line 145, in get_project
+    project_name = get_project_name(
+                   ^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/compose/cli/command.py", line 206, in get_project_name
+    project = os.path.basename(os.path.abspath(working_dir))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen posixpath>", line 423, in abspath
+FileNotFoundError: [Errno 2] No such file or directoryAfficher plusLe problème vient de votre chemin WSL qui pointe vers un répertoire Windows. Docker Compose a du mal avec ces chemins.
+🔧 Solutions
+Solution 1 : Utiliser un chemin Linux natif (Recommandé) ✅
+bash# 1. Copier votre projet dans un dossier Linux natif
+cp -r /mnt/c/Users/mboup/Desktop/m2_project/m2_enedis/streamlit ~/streamlit-project
+
+# 2. Aller dans ce nouveau dossier
+cd ~/streamlit-project
+
+# 3. Vérifier que vous êtes au bon endroit
+pwd
+# Devrait afficher : /home/modou/streamlit-project
+
+# 4. Relancer Docker
+docker-compose up -d streamlit
+
+Solution 2 : Convertir le chemin Windows (Alternative)
+Si vous voulez rester dans /mnt/c/ :
+bash# 1. Aller à la racine du projet
+cd /mnt/c/Users/mboup/Desktop/m2_project/m2_enedis/streamlit
+
+# 2. Exporter la variable d'environnement pour Docker Compose
+export COMPOSE_CONVERT_WINDOWS_PATHS=1
+
+# 3. Utiliser le chemin Windows converti
+COMPOSE_PROJECT_NAME=greentech docker-compose up -d streamlit
+
+Solution 3 : Utiliser Docker directement (Sans docker-compose)
+Si les solutions ci-dessus ne marchent pas :
+bash# 1. Construire l'image
+docker build -t greentech-streamlit .
+
+# 2. Créer le réseau
+docker network create greentech-network 2>/dev/null || true
+
+# 3. Lancer le conteneur
+docker run -d \
+  --name greentech-streamlit \
+  --network greentech-network \
+  -p 8501:8501 \
+  -v "$(pwd)/data:/app/data" \
+  -v "$(pwd)/models:/app/models" \
+  -v "$(pwd)/logs:/app/logs" \
+  -e SERVICE_MODE=streamlit \
+  -e PYTHONUNBUFFERED=1 \
+  greentech-streamlit
+
+# 4. Voir les logs
+docker logs -f greentech-streamlit
+
+🎯 Ma recommandation (Plus simple)
+Utilisez la Solution 1 - copier le projet dans votre home Linux :
+bash# Tout en une fois
+cd ~
+cp -r /mnt/c/Users/mboup/Desktop/m2_project/m2_enedis/streamlit ~/greentech-project
+cd ~/greentech-project
+docker-compose up -d streamlit
+docker-compose logs -f streamlit
+
+✅ Vérification
+Une fois lancé, vous devriez voir :
+bash# Vérifier le conteneur
+docker ps
+
+# Devrait afficher :
+CONTAINER ID   IMAGE                  STATUS          PORTS
+abc123...      streamlit_streamlit    Up 10 seconds   0.0.0.0:8501->8501/tcp
+Puis ouvrez : http://localhost:8501
+
+Essayez la Solution 1 d'abord, c'est la plus fiable avec WSL ! Dites-moi ce que vous obtenez. 🚀RéessayerMmodou@MBOUP:~/streamlit-project$ docker-compose up -d streamlit
+Creating network "streamlit-project_greentech-network" with driver "bridge"
+Creating volume "streamlit-project_data" with local driver
+Creating volume "streamlit-project_models" with local driver
+Creating volume "streamlit-project_logs" with local driver
+Building streamlit
+[+] Building 442.6s (14/14) FINISHED                                                                     docker:default
+ => [internal] load build definition from dockerfile                                                               0.2s
+ => => transferring dockerfile: 1.33kB                                                                             0.0s
+ => [internal] load metadata for docker.io/library/python:3.12-slim                                                3.8s
+ => [internal] load .dockerignore                                                                                  0.1s
+ => => transferring context: 615B                                                                                  0.0s
+ => [internal] load build context                                                                                113.2s
+ => => transferring context: 2.22GB                                                                              113.1s
+ => [1/9] FROM docker.io/library/python:3.12-slim@sha256:e97cf9a2e84d604941d9902f00616db7466ff302af4b1c3c67fb7c52  0.0s
+ => CACHED [2/9] WORKDIR /app                                                                                      0.0s
+ => CACHED [3/9] RUN apt-get update && apt-get install -y     build-essential     curl     git     && rm -rf /var  0.0s
+ => [4/9] COPY requirements.txt .                                                                                  0.6s
+ => [5/9] RUN pip install --no-cache-dir --upgrade pip &&     pip install --no-cache-dir -r requirements.txt     192.5s
+ => [6/9] COPY . .                                                                                                46.0s
+ => [7/9] RUN mkdir -p data models logs &&     chmod -R 755 data models logs                                      37.7s
+ => [8/9] COPY docker-entrypoint.sh /docker-entrypoint.sh                                                          0.2s
+ => [9/9] RUN chmod +x /docker-entrypoint.sh                                                                       1.0s
+ => exporting to image                                                                                            46.2s
+ => => exporting layers                                                                                           46.1s
+ => => writing image sha256:6f8953a8af63e07118f767982a33fddb2edd4f1c82dafa48e1e06ea87ad64515                       0.0s
+ => => naming to docker.io/library/streamlit-project_streamlit                                                     0.0s
+WARNING: Image for service streamlit was built because it did not already exist. To rebuild this image you must use docker-compose build or docker-compose up --build.
+Creating greentech-streamlit ... error
+ERROR: for greentech-streamlit  Cannot create container for service streamlit: Conflict. The container name "/greentech-streamlit" is already in use by container "e52dc651527184beb2c6fcfc6db7eacc95b38e06ebf83a25564f84c6192b8485". You have to remove (or rename) that container to be able to reuse that name.
+ERROR: for streamlit  Cannot create container for service streamlit: Conflict. The container name "/greentech-streamlit" is already in use by container "e52dc651527184beb2c6fcfc6db7eacc95b38e06ebf83a25564f84c6192b8485". You have to remove (or rename) that container to be able to reuse that name.
+ERROR: Encountered errors while bringing up the project.
+modou@MBOUP:~/streamlit-project$Afficher plusExcellent ! L'image est construite ✅, mais il y a un conteneur existant avec le même nom qui bloque. Il faut le supprimer.
+🔧 Solution rapide
+bash# 1. Arrêter et supprimer l'ancien conteneur
+docker rm -f greentech-streamlit
+
+# 2. Relancer
+docker-compose up -d streamlit
+
+# 3. Voir les logs
+docker-compose logs -f streamlit
+
+🧹 Ou nettoyer complètement (recommandé)
+bash# Nettoyer tous les anciens conteneurs et volumes
+docker-compose down -v
+
+# Relancer proprement
+docker-compose up -d streamlit
+
+# Suivre les logs
+docker-compose logs -f streamlit
+```
+
+---
+
+## ✅ **Vérification**
+
+Après le lancement, vous devriez voir dans les logs :
+```
+🚀 Démarrage de GreenTech Solutions...
+📦 Mode: streamlit
+📊 Démarrage de l'interface Streamlit...
+🌐 Accessible sur: http://localhost:8501
+
+You can now view your Streamlit app in your browser.
+
+  Network URL: http://172.x.x.x:8501
+  External URL: http://x.x.x.x:8501
+Puis vérifiez :
+bash# État du conteneur
+docker ps
+
+# Devrait montrer :
+CONTAINER ID   IMAGE                        STATUS         PORTS
+abc123...      streamlit-project_streamlit  Up 5 seconds   0.0.0.0:8501->8501/tcp
+
+🌐 Accéder à l'application
+Ouvrez votre navigateur : http://localhost:8501
+
+Lancez ces commandes et dites-moi si ça démarre correctement ! 🚀RéessayerMmodou@MBOUP:~/streamlit-project$ docker-compose down -v
+Removing greentech-streamlit ... done
+Removing network streamlit-project_greentech-network
+Removing volume streamlit-project_data
+Removing volume streamlit-project_models
+Removing volume streamlit-project_logs
+modou@MBOUP:~/streamlit-project$ docker-compose up -d streamlit
+Creating network "streamlit-project_greentech-network" with driver "bridge"
+Creating volume "streamlit-project_data" with local driver
+Creating volume "streamlit-project_models" with local driver
+Creating volume "streamlit-project_logs" with local driver
+Creating greentech-streamlit ... error
+ERROR: for greentech-streamlit  Cannot start service streamlit: Ports are not available: exposing port TCP 0.0.0.0:8501 -> 0.0.0.0:0: listen tcp4 0.0.0.0:8501: bind: Only one usage of each socket address (protocol/network address/port) is normally permitted.
+ERROR: for streamlit  Cannot start service streamlit: Ports are not available: exposing port TCP 0.0.0.0:8501 -> 0.0.0.0:0: listen tcp4 0.0.0.0:8501: bind: Only one usage of each socket address (protocol/network address/port) is normally permitted.
+ERROR: Encountered errors while bringing up the project.
+modou@MBOUP:~/streamlit-project$Afficher plusLe port 8501 est toujours occupé ! Il faut trouver et arrêter le processus qui l'utilise.
+🔍 Trouver ce qui utilise le port 8501
+bash# Sous WSL/Linux
+sudo lsof -i :8501
+
+# OU
+sudo netstat -tulpn | grep :8501
+
+# OU vérifier tous les conteneurs Docker (même arrêtés)
+docker ps -a | grep 8501
+
+🛑 Solutions
+Solution 1 : Tuer le processus qui occupe le port
+bash# Trouver le PID
+sudo lsof -i :8501
+# Vous verrez quelque chose comme :
+# COMMAND   PID   USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+# python    1234  modou  3u   IPv4  12345      0t0  TCP *:8501 (LISTEN)
+
+# Tuer ce processus (remplacez 1234 par le vrai PID)
+kill -9 1234
+
+# Puis relancer
+docker-compose up -d streamlit
+
+Solution 2 : Changer le port (plus rapide)
+Modifiez le docker-compose.yml pour utiliser un autre port :
+bash# Ouvrir le fichier
+nano docker-compose.yml
+Changez cette ligne dans la section streamlit:
+yamlports:
+  - "8502:8501"  # Utiliser 8502 au lieu de 8501
+Puis :
+bash# Sauvegarder (Ctrl+O, Enter, Ctrl+X)
+
+# Relancer
+docker-compose up -d streamlit
+
+# Votre app sera sur http://localhost:8502
+
+Solution 3 : Arrêter tous les conteneurs Docker
+bash# Arrêter TOUS les conteneurs en cours
+docker stop $(docker ps -aq)
+
+# Supprimer tous les conteneurs arrêtés
+docker rm $(docker ps -aq)
+
+# Relancer
+docker-compose up -d streamlit
+
+🎯 Ma recommandation rapide
+Utilisez la Solution 2 (changer le port) - c'est le plus rapide :
+bash# 1. Éditer le fichier
+sed -i 's/"8501:8501"/"8502:8501"/' docker-compose.yml
+
+# 2. Vérifier le changement
+grep -A2 "ports:" docker-compose.yml
+
+# 3. Relancer
+docker-compose up -d streamlit
+
+# 4. Voir les logs
+docker-compose logs -f streamlit
+Votre application sera accessible sur : http://localhost:8502
+
+Quelle solution voulez-vous essayer ? Je recommande de commencer par changer le port en 8502 pour avancer rapidement ! 🚀RéessayerMmodou@MBOUP:~/streamlit-project$ sudo lsof -i :8501
+[sudo] password for modou:
+modou@MBOUP:~/streamlit-project$ sudo lsof -i :8501
+modou@MBOUP:~/streamlit-project$ sudo netstat -tulpn | grep :8501
+sudo: netstat: command not found
+modou@MBOUP:~/streamlit-project$ docker ps -a | grep 8501
+modou@MBOUP:~/streamlit-project$Intéressant ! Le port 8501 ne semble pas utilisé sous Linux/WSL, mais Windows bloque quand même. C'est un problème classique avec WSL et Docker Desktop.
+🔧 Le problème : WSL + Docker Desktop + Windows
+Le port peut être occupé côté Windows même s'il est libre sous WSL.
+✅ Solutions
+Solution 1 : Redémarrer Docker Desktop (Le plus efficace)
+bash# Depuis WSL, arrêter Docker
+docker stop $(docker ps -aq) 2>/dev/null
+
+# Puis sur Windows :
+# 1. Clic droit sur l'icône Docker Desktop dans la barre des tâches
+# 2. Cliquer sur "Quit Docker Desktop"
+# 3. Attendre 10 secondes
+# 4. Relancer Docker Desktop
+# 5. Attendre que Docker soit complètement démarré (icône verte)
+
+# Retour dans WSL
+docker-compose up -d streamlit
+
+Solution 2 : Utiliser le port 8502 (Plus rapide)
+bash# Changer le port dans docker-compose.yml
+sed -i 's/"8501:8501"/"8502:8501"/' docker-compose.yml
+
+# Vérifier
+cat docker-compose.yml | grep -A3 "streamlit:" | grep ports
+
+# Relancer
+docker-compose up -d streamlit
+
+# Logs
+docker-compose logs -f streamlit
+Votre app sera sur http://localhost:8502
+
+Solution 3 : Vérifier les ports Windows
+Depuis PowerShell Windows (pas WSL) :
+powershell# Ouvrir PowerShell en tant qu'administrateur et exécuter :
+netstat -ano | findstr :8501
+
+# Si vous voyez un processus, tuez-le :
+taskkill /PID <le_numero_PID> /F
+
+🎯 Ma recommandation
+Essayez la Solution 2 immédiatement (c'est instantané) :
+bash# Tout en une commande
+sed -i 's/"8501:8501"/"8502:8501"/' docker-compose.yml && \
+docker-compose up -d streamlit && \
+docker-compose logs -f streamlit
+Ensuite ouvrez : http://localhost:8502
+
+Si vous préférez garder le port 8501, faites la Solution 1 (redémarrer Docker Desktop).
+Quelle solution voulez-vous essayer ? 🚀RéessayerMok nickel ça marche. comment je fais pour acceder à l'api et si j'ai une correction à apporter dans mon application  je dois recommencer tout le processus? et si je finis tout commence je partage mon projet à quelqu'un?Excellent ! 🎉 Je vais répondre à vos 3 questions :
+
+1️⃣ Comment accéder à l'API FastAPI ?
+bash# Démarrer l'API
+docker-compose up -d api
+
+# Voir les logs
+docker-compose logs -f api
+L'API sera accessible sur : http://localhost:8000
+
+Documentation Swagger : http://localhost:8000/docs
+Documentation ReDoc : http://localhost:8000/redoc
+
+Pour démarrer les deux services en même temps :
+bashdocker-compose up -d streamlit api
+
+2️⃣ Apporter des corrections sans tout reconstruire
+Vous avez 3 options selon le type de modification :
+Option A : Mode développement avec volumes (Recommandé) 🔥
+Modifiez votre docker-compose.yml pour activer le hot-reload :
+bashnano docker-compose.yml
+Décommentez ces lignes dans la section streamlit :
+yamlvolumes:
+  - ./data:/app/data
+  - ./models:/app/models
+  - ./logs:/app/logs
+  # Décommentez ces lignes pour le développement ⬇️
+  - ./pages:/app/pages
+  - ./app.py:/app/app.py
+  - .:/app  # OU montez tout le projet
+Puis redémarrez :
+bashdocker-compose restart streamlit
+Avantages : Les modifications de code sont prises en compte immédiatement (ou après F5) !
+
+Option B : Reconstruire seulement ce qui a changé ⚡
+bash# Si vous modifiez du code Python
+docker-compose up -d --build streamlit
+
+# Plus rapide car Docker utilise le cache pour ce qui n'a pas changé
+
+Option C : Redémarrage simple 🔄
+Pour des petites modifications :
+bash# Copier les fichiers modifiés dans le conteneur
+docker cp app.py greentech-streamlit:/app/app.py
+docker cp pages/enedis.py greentech-streamlit:/app/pages/enedis.py
+
+# Redémarrer le conteneur
+docker-compose restart streamlit
+
+3️⃣ Partager votre projet avec quelqu'un
+Méthode 1 : Partager les fichiers (Simple) 📦
+Créez une archive de votre projet :
+bashcd ~
+tar -czf greentech-project.tar.gz \
+  --exclude='streamlit-project/__pycache__' \
+  --exclude='streamlit-project/.git' \
+  --exclude='streamlit-project/venv' \
+  streamlit-project/
+
+# Ou avec zip
+zip -r greentech-project.zip streamlit-project/ \
+  -x "*/__pycache__/*" "*/.git/*" "*/venv/*"
+Instructions pour votre collègue :
+bash# 1. Extraire
+tar -xzf greentech-project.tar.gz
+cd streamlit-project/
+
+# 2. Lancer
+docker-compose up -d streamlit
+
+# 3. Accéder
+# http://localhost:8502
+
+Méthode 2 : GitHub + Docker Hub (Pro) 🚀README.md - Instructions de déploiementDocument # 🌿 GreenTech Solutions - Dashboard Énergétique
+
+Application Streamlit d'analyse des données énergétiques ADEME et Enedis.
+
+## 📋 Prérequis
+
+- Docker Desktop installé
+- Docker Compose
+- 4 GB RAM minimum
+
+## 🚀 Installation rapide
+
+### Option 1 : AveÉtapes pour partager sur GitHub :
+bash# 1. Initialiser Git (si pas déjà fait)
+cd ~/streamlit-project
+git init
+
+# 2. Créer .gitignore
+cat > .gitignore << 'EOF'
+__pycache__/
+*.pyc
+venv/
+.env
+logs/*.log
+.DS_Store
+EOF
+
+# 3. Premier commit
+git add .
+git commit -m "Initial commit - GreenTech Dashboard"
+
+# 4. Créer un repo sur GitHub (via navigateur)
+# Puis lier et pousser :
+git remote add origin https://github.com/votre-username/greentech-project.git
+git branch -M main
+git push -u origin main
+Votre collègue pourra cloner :
+bashgit clone https://github.com/votre-username/greentech-project.git
+cd greentech-project
+docker-compose up -d streamlit
+
+Méthode 3 : Publier l'image Docker (Expert) 🐳
+bash# 1. Build et tag l'image
+docker build -t votre-username/greentech:latest .
+
+# 2. Se connecter à Docker Hub
+docker login
+
+# 3. Pousser l'image
+docker push votre-username/greentech:latest
+Votre collègue pourra alors :
+bashdocker pull votre-username/greentech:latest
+docker run -d -p 8502:8501 votre-username/greentech:latest
+
+🎯 Résumé rapide
+BesoinCommandeModifier du codeActivez les volumes dans docker-compose.ymlReconstruire vitedocker-compose up -d --build streamlitPartager simplementEnvoyez l'archive .tar.gz + READMEPartager proGitHub + git clone + docker-compose up
+
+Quelle méthode de partage vous intéresse le plus ? Je peux détailler davantage ! 🚀

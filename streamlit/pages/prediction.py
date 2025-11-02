@@ -1,50 +1,28 @@
+
 import streamlit as st
 import pandas as pd
 import numpy as np
 import pickle
+import joblib
 import plotly.graph_objects as go
 import plotly.express as px
 from io import BytesIO
 import os
 
+@st.cache_resource
 def load_models():
-    """Charger les modèles sauvegardés"""
-    try:
-        # Vérifier que les fichiers existent
-        if not os.path.exists('models/classification_model.pkl'):
-            st.error("❌ Fichier 'models/classification_model.pkl' introuvable")
-            return None, None
-        if not os.path.exists('models/regression_model.pkl'):
-            st.error("❌ Fichier 'models/regression_model.pkl' introuvable")
-            return None, None
-        
-        # Charger le modèle de classification
-        try:
-            with open('models/classification_model.pkl', 'rb') as f:
-                model_classification = pickle.load(f)
-            st.success("✅ Modèle de classification chargé")
-        except Exception as e:
-            st.error(f"❌ Erreur lors du chargement du modèle de classification : {e}")
-            st.info("💡 Essayez de réentraîner et sauvegarder le modèle avec la version actuelle de scikit-learn")
-            return None, None
-        
-        # Charger le modèle de régression
-        try:
-            with open('models/regression_model.pkl', 'rb') as f:
-                model_regression = pickle.load(f)
-            st.success("✅ Modèle de régression chargé")
-        except Exception as e:
-            st.error(f"❌ Erreur lors du chargement du modèle de régression : {e}")
-            return None, None
-        
-        return model_classification, model_regression
-        
-    except Exception as e:
-        st.error(f"❌ Erreur générale : {e}")
-        import traceback
-        st.code(traceback.format_exc())
+    import joblib, os
+    if not os.path.exists("models/classification_model.pkl") or not os.path.exists("models/regression_model.pkl"):
         return None, None
 
+    try:
+        model_classification = joblib.load("models/classification_model.pkl")
+        model_regression = joblib.load("models/regression_model.pkl")
+        return model_classification, model_regression
+    except Exception as e:
+        return None, None
+
+@st.cache_resource
 def prepare_input_data(data_dict, encode=True):
     """Préparer les données d'entrée pour la prédiction"""
     df = pd.DataFrame([data_dict])
@@ -62,9 +40,9 @@ def prepare_input_data(data_dict, encode=True):
         
         # Vérifier si les valeurs existent dans les maps
         if df['type_batiment'].iloc[0] not in type_batiment_map:
-            st.warning(f"⚠️ Type de bâtiment '{df['type_batiment'].iloc[0]}' non reconnu")
+            st.warning(f" Type de bâtiment '{df['type_batiment'].iloc[0]}' non reconnu")
         if df['type_energie_recodee'].iloc[0] not in energie_map:
-            st.warning(f"⚠️ Type d'énergie '{df['type_energie_recodee'].iloc[0]}' non reconnu")
+            st.warning(f" Type d'énergie '{df['type_energie_recodee'].iloc[0]}' non reconnu")
         
         df['type_batiment'] = df['type_batiment'].map(type_batiment_map)
         df['type_energie_recodee'] = df['type_energie_recodee'].map(energie_map)
@@ -72,33 +50,55 @@ def prepare_input_data(data_dict, encode=True):
     return df
 
 def show():
-    st.title("🔮 Prédiction de Performance Énergétique")
+    st.title(" Prédiction de Performance Énergétique")
     st.markdown("### Estimez l'étiquette DPE et le coût énergétique d'un logement")
     
     # Charger les modèles
     model_classif, model_regress = load_models()
     
     if model_classif is None or model_regress is None:
-        st.info("💡 Placez vos modèles dans le dossier `models/` avec les noms :\n- `classification_model.pkl`\n- `regression_model.pkl`")
+        st.info(" Placez vos modèles dans le dossier `models/` avec les noms :\n- `classification_model.pkl`\n- `regression_model.pkl`")
         return
     
-    # Afficher les performances des modèles
-    st.markdown("---")
-    col1, col2, col3, col4 = st.columns(4)
-    
-    with col1:
-        st.metric("🎯 Accuracy", "98.06%", help="Précision de la classification DPE")
-    with col2:
-        st.metric("📊 F1-Score", "0.97", help="Score F1 moyen de la classification")
-    with col3:
-        st.metric("📈 R² Score", "0.979", help="Coefficient de détermination de la régression")
-    with col4:
-        st.metric("✅ Modèles", "Chargés", delta="Prêts", help="Modèles chargés avec succès")
-    
-    st.markdown("---")
-    
     # Onglets pour les deux modes
-    tab1, tab2 = st.tabs(["📝 Prédiction individuelle", "📊 Prédiction par lot (CSV)"])
+    tab1, tab2 = st.tabs([" Prédiction individuelle", " Prédiction par lot (CSV)"])
+    st.markdown("""
+<style>
+/* Conteneur global des tabs */
+.stTabs [data-baseweb="tab-list"] {
+    gap: 10px;
+}
+
+/* Style général des onglets */
+.stTabs [data-baseweb="tab"] {
+    background-color: #e8f5e9;   /* vert clair */
+    color: #1b5e20;              /* texte vert foncé */
+    border-radius: 6px 6px 0 0;
+    padding: 8px 16px;
+    font-weight: 500;
+    font-size: 15px;
+    border: none !important;
+    transition: all 0.3s ease;
+    border-bottom: 3px solid transparent !important;
+}
+
+/* Onglet actif — même couleur que la navbar */
+.stTabs [aria-selected="true"] {
+    background-color: #1b5e20 !important;  /* vert foncé */
+    color: white !important;
+    font-weight: 600;
+    border: none !important;
+    border-bottom: 3px solid #1b5e20 !important;
+}
+
+/* Hover — reste vert, pas d'orange */
+.stTabs [data-baseweb="tab"]:hover {
+    background-color: #2e7d32 !important;  /* vert moyen */
+    color: white !important;
+    border-bottom: 3px solid #e8f5e9 !important;
+}
+</style>
+""", unsafe_allow_html=True)
     
     # TAB 1 : Prédiction individuelle
     with tab1:
@@ -107,135 +107,112 @@ def show():
         col1, col2 = st.columns(2)
         
         with col1:
-            st.markdown("##### 🏠 Caractéristiques du bâtiment")
+            st.markdown("##### Caractéristiques du bâtiment")
             
             type_batiment = st.selectbox(
-                "Type de bâtiment",
+                "Type de bâtiment (type_batiment)",
                 options=['maison', 'appartement', 'immeuble'],
-                help="Type de construction"
+                help="Sélectionnez le type de construction du logement"
             )
             
             surface_habitable = st.number_input(
-                "Surface habitable (m²)",
+                "Surface habitable en m² (surface_habitable_logement)",
                 min_value=10.0,
-                max_value=500.0,
+                max_value=500000.0,
                 value=100.0,
                 step=5.0,
-                help="Surface habitable du logement"
+                help="Surface totale habitable du logement en mètres carrés"
             )
             
             type_energie = st.selectbox(
-                "Type d'énergie principale",
+                "Source d'énergie principale (type_energie_recodee)",
                 options=['Electricite', 'Gaz_naturel', 'Fioul domestique', 
                         'Reseau_de_chauffage_urbain', 'Autres'],
-                help="Source d'énergie principale du logement"
-            )
-            
-            etiquette_ges = st.selectbox(
-                "Étiquette GES",
-                options=['A', 'B', 'C', 'D', 'E', 'F', 'G'],
-                index=3,
-                help="Étiquette d'émissions de gaz à effet de serre"
+                help="Énergie utilisée pour le chauffage et l'eau chaude"
             )
         
         with col2:
-            st.markdown("##### ⚡ Consommations et coûts")
+            st.markdown("##### Consommations énergétiques")
             
             conso_5_usages_par_m2 = st.number_input(
-                "Consommation 5 usages par m² (kWh/m²/an)",
+                "Consommation annuelle par m² (conso_5_usages_par_m2_ef)",
                 min_value=0.0,
-                max_value=500.0,
+                max_value=500000.0,
                 value=200.0,
                 step=10.0,
-                help="Consommation énergétique pour les 5 usages réglementaires"
+                help="Consommation énergétique par m² pour chauffage, eau chaude, refroidissement, éclairage et auxiliaires (kWh/m²/an)"
             )
             
             conso_ecs = st.number_input(
-                "Consommation ECS (kWh/an)",
+                "Eau chaude sanitaire (conso_ecs_ef)",
                 min_value=0.0,
-                max_value=10000.0,
+                max_value=500000.0,
                 value=2000.0,
                 step=100.0,
-                help="Consommation pour l'eau chaude sanitaire"
+                help="Consommation annuelle pour l'eau chaude (douches, bains, cuisine) en kWh/an"
             )
             
             conso_auxiliaires = st.number_input(
-                "Consommation auxiliaires (kWh/an)",
+                "Ventilation et pompes (conso_auxiliaires_ef)",
                 min_value=0.0,
-                max_value=5000.0,
+                max_value=500000.0,
                 value=500.0,
                 step=50.0,
-                help="Consommation des équipements auxiliaires"
+                help="Consommation des équipements auxiliaires (VMC, circulateurs, etc.) en kWh/an"
             )
             
             conso_refroidissement = st.number_input(
-                "Consommation refroidissement (kWh/an)",
+                "Climatisation (conso_refroidissement_ef)",
                 min_value=0.0,
-                max_value=5000.0,
+                max_value=500000.0,
                 value=0.0,
                 step=50.0,
-                help="Consommation pour la climatisation"
+                help="Consommation pour la climatisation/refroidissement en kWh/an (0 si pas de clim)"
             )
         
+        st.markdown("##### Coûts énergétiques")
         col1, col2 = st.columns(2)
         
         with col1:
             cout_ecs = st.number_input(
-                "Coût ECS (€/an)",
+                "Coût annuel eau chaude (cout_ecs)",
                 min_value=0.0,
-                max_value=2000.0,
+                max_value=500000.0,
                 value=300.0,
-                step=10.0
+                step=10.0,
+                help="Coût annuel pour l'eau chaude sanitaire en €/an"
             )
             
-            cout_auxiliaires = st.number_input(
-                "Coût auxiliaires (€/an)",
-                min_value=0.0,
-                max_value=1000.0,
-                value=100.0,
-                step=10.0
-            )
         
         with col2:
             cout_eclairage = st.number_input(
-                "Coût éclairage (€/an)",
+                "Coût annuel éclairage (cout_eclairage)",
                 min_value=0.0,
-                max_value=500.0,
+                max_value=500000.0,
                 value=80.0,
-                step=5.0
+                step=5.0,
+                help="Coût annuel pour l'éclairage en €/an"
             )
             
-            emission_ges_ecs = st.number_input(
-                "Émissions GES ECS (kg CO₂/an)",
-                min_value=0.0,
-                max_value=5000.0,
-                value=500.0,
-                step=50.0
-            )
         
         # Calculer automatiquement certaines valeurs
         conso_5_usages_ef = conso_5_usages_par_m2 * surface_habitable
-        emission_ges_5_usages = emission_ges_ecs * 5  # Approximation
         
-        st.info(f"💡 Consommation totale estimée : **{conso_5_usages_ef:,.0f} kWh/an**")
+        st.info(f" Consommation totale estimée : **{conso_5_usages_ef:,.0f} kWh/an**")
         
         # Bouton de prédiction
-        if st.button("🔮 Lancer la prédiction", type="primary", use_container_width=True):
+        if st.button(" Lancer la prédiction", type="primary", use_container_width=True):
             with st.spinner("Analyse en cours..."):
                 # Préparer les données
                 input_data = {
                     'conso_auxiliaires_ef': conso_auxiliaires,
                     'cout_eclairage': cout_eclairage,
                     'conso_5_usages_par_m2_ef': conso_5_usages_par_m2,
-                    'emission_ges_ecs': emission_ges_ecs,
                     'conso_5_usages_ef': conso_5_usages_ef,
                     'surface_habitable_logement': surface_habitable,
                     'cout_ecs': cout_ecs,
-                    'cout_auxiliaires': cout_auxiliaires,
                     'type_batiment': type_batiment,
                     'conso_ecs_ef': conso_ecs,
-                    'emission_ges_5_usages': emission_ges_5_usages,
-                    'etiquette_ges': etiquette_ges,
                     'conso_refroidissement_ef': conso_refroidissement,
                     'type_energie_recodee': type_energie
                 }
@@ -259,7 +236,8 @@ def show():
                     
                     # Afficher les résultats
                     st.markdown("---")
-                    st.markdown("### 🎯 Résultats de la prédiction")
+                    st.balloons()
+                    st.markdown("### Résultats de la prédiction")
                     
                     col1, col2 = st.columns(2)
                     
@@ -295,7 +273,7 @@ def show():
                     # Distribution des probabilités
                     if probas is not None:
                         st.markdown("---")
-                        st.markdown("#### 📊 Distribution des probabilités")
+                        st.markdown("#### Distribution des probabilités")
                         
                         fig_proba = go.Figure(data=[
                             go.Bar(
@@ -316,69 +294,33 @@ def show():
                         
                         st.plotly_chart(fig_proba, use_container_width=True)
                     
-                    # Recommandations
-                    st.markdown("---")
-                    st.markdown("#### 💡 Recommandations")
-                    
-                    if etiquette_pred in ['F', 'G']:
-                        st.error(f"""
-                        ⚠️ **Performance énergétique faible (classe {etiquette_pred})**
-                        
-                        Recommandations prioritaires :
-                        - 🏠 Améliorer l'isolation thermique (murs, toiture, fenêtres)
-                        - 🔥 Remplacer le système de chauffage par une solution plus efficace
-                        - 💡 Optimiser l'éclairage et les équipements électriques
-                        - ♻️ Envisager l'installation de panneaux solaires
-                        """)
-                    elif etiquette_pred in ['D', 'E']:
-                        st.warning(f"""
-                        ⚡ **Performance énergétique moyenne (classe {etiquette_pred})**
-                        
-                        Améliorations suggérées :
-                        - 🪟 Installer du double vitrage si absent
-                        - 🌡️ Optimiser la régulation du chauffage
-                        - 💨 Améliorer la ventilation pour réduire les pertes
-                        """)
-                    else:
-                        st.success(f"""
-                        ✅ **Bonne performance énergétique (classe {etiquette_pred})**
-                        
-                        Pour maintenir cette performance :
-                        - 🔧 Entretien régulier des équipements
-                        - 📊 Suivi des consommations
-                        - 🌱 Continuer les bonnes pratiques énergétiques
-                        """)
                     
                     # Estimation économies potentielles
                     if etiquette_pred in ['E', 'F', 'G']:
                         economie_potentielle = cout_pred * 0.4  # 40% d'économie possible
-                        st.info(f"💰 Économies potentielles après rénovation : **{economie_potentielle:,.0f} €/an**")
+                        st.info(f" Économies potentielles après rénovation : **{economie_potentielle:,.0f} €/an**")
                 
                 except Exception as e:
-                    st.error(f"Erreur lors de la prédiction : {e}")
+                    st.error(f" Erreur lors de la prédiction : {e}")
                     import traceback
                     st.code(traceback.format_exc())
     
     # TAB 2 : Prédiction par lot
     with tab2:
-        st.markdown("#### 📤 Uploader un fichier CSV pour prédictions multiples")
+        st.markdown("#### Uploader un fichier CSV pour prédictions multiples")
         
         # Template téléchargeable
-        st.markdown("##### 📋 Format du fichier")
+        st.markdown("##### Format du fichier requis")
         
         template_data = {
             'conso_auxiliaires_ef': [500],
             'cout_eclairage': [80],
             'conso_5_usages_par_m2_ef': [200],
-            'emission_ges_ecs': [500],
             'conso_5_usages_ef': [20000],
             'surface_habitable_logement': [100],
             'cout_ecs': [300],
-            'cout_auxiliaires': [100],
             'type_batiment': ['maison'],
             'conso_ecs_ef': [2000],
-            'emission_ges_5_usages': [2500],
-            'etiquette_ges': ['D'],
             'conso_refroidissement_ef': [0],
             'type_energie_recodee': ['Electricite']
         }
@@ -391,7 +333,7 @@ def show():
         with col2:
             csv_template = template_df.to_csv(index=False).encode('utf-8')
             st.download_button(
-                label="📥 Télécharger template",
+                label=" Télécharger template",
                 data=csv_template,
                 file_name="template_prediction.csv",
                 mime="text/csv"
@@ -410,10 +352,10 @@ def show():
             try:
                 df_batch = pd.read_csv(uploaded_file)
                 
-                st.success(f"✅ Fichier chargé : {len(df_batch)} lignes")
+                st.success(f" Fichier chargé : {len(df_batch)} lignes")
                 st.dataframe(df_batch.head(), use_container_width=True)
                 
-                if st.button("🚀 Lancer les prédictions", type="primary"):
+                if st.button(" Lancer les prédictions", type="primary"):
                     with st.spinner(f"Prédiction en cours pour {len(df_batch)} logements..."):
                         # Préparer les données
                         df_prepared = df_batch.copy()
@@ -437,22 +379,22 @@ def show():
                         df_batch['cout_total_predit'] = predictions_cout.round(0)
                         
                         st.markdown("---")
-                        st.markdown("### 🎯 Résultats des prédictions")
+                        st.markdown("### Résultats des prédictions")
                         
                         # Statistiques
                         col1, col2, col3, col4 = st.columns(4)
                         
                         with col1:
-                            st.metric("📊 Total logements", len(df_batch))
+                            st.metric(" Total logements", len(df_batch))
                         with col2:
                             cout_moyen = df_batch['cout_total_predit'].mean()
-                            st.metric("💰 Coût moyen", f"{cout_moyen:,.0f} €")
+                            st.metric(" Coût moyen", f"{cout_moyen:,.0f} €")
                         with col3:
                             etiquette_mode = df_batch['etiquette_dpe_predite'].mode()[0]
-                            st.metric("🏆 Étiquette la plus fréquente", etiquette_mode)
+                            st.metric(" Étiquette la plus fréquente", etiquette_mode)
                         with col4:
                             pct_bonnes = (df_batch['etiquette_dpe_predite'].isin(['A', 'B', 'C']).sum() / len(df_batch)) * 100
-                            st.metric("✅ Bonnes classes (A-C)", f"{pct_bonnes:.1f}%")
+                            st.metric(" Bonnes classes (A-C)", f"{pct_bonnes:.1f}%")
                         
                         # Graphiques
                         col1, col2 = st.columns(2)
@@ -501,13 +443,13 @@ def show():
                             st.plotly_chart(fig_cout, use_container_width=True)
                         
                         # Afficher le tableau complet
-                        st.markdown("#### 📋 Tableau des résultats")
+                        st.markdown("#### Tableau des résultats")
                         st.dataframe(df_batch, use_container_width=True, height=400)
                         
                         # Export
                         csv_results = df_batch.to_csv(index=False).encode('utf-8')
                         st.download_button(
-                            label="📥 Télécharger les résultats (CSV)",
+                            label=" Télécharger les résultats (CSV)",
                             data=csv_results,
                             file_name="predictions_resultats.csv",
                             mime="text/csv",

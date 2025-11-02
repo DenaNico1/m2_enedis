@@ -1,0 +1,10 @@
+1- chmod +x docker-entrypoint.sh
+2- make build
+3- docker-compose up -d streamlit
+4- cp -r /mnt/c/Users/mboup/Desktop/m2_project/m2_enedis/streamlit ~/streamlit-project
+5- cd ~/streamlit-project
+6- docker-compose up -d streamlit
+7- docker rm -f greentech-streamlit
+8- docker-compose up -d streamlit
+9- docker-compose up -d --build streamlit
+10 - 

@@ -1,17 +1,19 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+from pages.analysis import load_data
+
 
 def show():
-    st.title("🏠 Tableau de bord énergétique")
+    st.title(" Tableau de bord énergétique")
     st.markdown("### Exploration interactive des données DPE")
 
     try:
-        df = pd.read_csv("data/donnees_ademe_finales_nettoyees_69_final_pret.csv")
+        df = load_data("data/donnees_ademe_finales_nettoyees_69_final_pret.csv")
         
         # Section filtres
         st.markdown("---")
-        st.markdown("#### 🔍 Filtres")
+        st.markdown("####  Filtres")
         
         col1, col2, col3 = st.columns(3)
         
@@ -51,24 +53,24 @@ def show():
         col1, col2, col3, col4 = st.columns(4)
         
         with col1:
-            st.metric("📍 Logements", f"{len(df_filtered):,}")
+            st.metric(" Logements", f"{len(df_filtered):,}")
         
         with col2:
             conso_moy = df_filtered['conso_5_usages_par_m2_ef'].mean()
-            st.metric("⚡ Conso. moyenne", f"{conso_moy:.0f} kWh/m²")
+            st.metric(" Conso. moyenne", f"{conso_moy:.0f} kWh/m²")
         
         with col3:
             cout_moy = df_filtered['cout_total_5_usages'].mean()
-            st.metric("💰 Coût moyen", f"{cout_moy:,.0f} €")
+            st.metric(" Coût moyen", f"{cout_moy:,.0f} €")
         
         with col4:
             ges_moy = df_filtered['emission_ges_5_usages'].mean()
-            st.metric("🌍 GES moyen", f"{ges_moy:,.0f} kg CO₂")
+            st.metric(" GES moyen", f"{ges_moy:,.0f} kg CO₂")
         
         st.markdown("---")
         
         # Tableau de données avec style
-        st.markdown("### 📋 Données détaillées")
+        st.markdown("###  Données détaillées")
         
         # Sélection des colonnes à afficher
         colonnes_affichage = [
@@ -101,7 +103,7 @@ def show():
         # Limiter le nombre de lignes affichées pour éviter l'erreur
         max_rows = 500
         if len(df_display) > max_rows:
-            st.warning(f"⚠️ Affichage limité aux {max_rows} premières lignes sur {len(df_display)} au total. Utilisez les filtres pour affiner votre recherche.")
+            st.warning(f" Affichage limité aux {max_rows} premières lignes sur {len(df_display)} au total. Utilisez les filtres pour affiner votre recherche.")
             df_display = df_display.head(max_rows)
         
         # Fonction pour colorer les étiquettes DPE
@@ -132,7 +134,7 @@ def show():
         with col2:
             csv = df_filtered.to_csv(index=False).encode('utf-8')
             st.download_button(
-                label="📥 Télécharger CSV",
+                label=" Télécharger CSV",
                 data=csv,
                 file_name="donnees_filtrees.csv",
                 mime="text/csv",
@@ -151,7 +153,7 @@ def show():
                 nbins=30,
                 color='etiquette_dpe',
                 color_discrete_map={
-                    'A': '#00A550', 'B': '#52B153', 'C': '#C3D545',
+                    'A': '#00A570', 'B': '#52B151', 'C': '#C3D545',
                     'D': '#FFF033', 'E': '#F39200', 'F': '#ED2124', 'G': '#CC0033'
                 },
                 labels={'cout_total_5_usages': 'Coût annuel (€)', 'count': 'Nombre de logements'}
@@ -160,18 +162,23 @@ def show():
             st.plotly_chart(fig_hist, use_container_width=True)
         
         with col2:
+            custom_colors = ["#2E7D32", "#FF7043", "#42A5F5", "#FDD835", "#AB47BC", "#8D6E63"]
+
             st.markdown("#### Répartition par type de bâtiment")
             type_counts = df_filtered['type_batiment'].value_counts()
             fig_type = px.pie(
                 values=type_counts.values,
                 names=type_counts.index,
-                color_discrete_sequence=px.colors.sequential.Greens
+                color_discrete_sequence=custom_colors
             )
             fig_type.update_layout(height=300)
             st.plotly_chart(fig_type, use_container_width=True)
         
     except FileNotFoundError:
-        st.error("❌ Le fichier `data/donnees_ademe_finales_nettoyees_69_final_pret.csv` est introuvable.")
-        st.info("📂 Assurez-vous que le fichier existe dans le dossier `data/`")
+        st.error(" Le fichier `data/donnees_ademe_finales_nettoyees_69_final_pret.csv` est introuvable.")
+        st.info("  Assurez-vous que le fichier existe dans le dossier `data/`")
     except Exception as e:
         st.error(f"Une erreur s'est produite : {e}")
+
+
+        
