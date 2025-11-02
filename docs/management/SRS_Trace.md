@@ -26,7 +26,7 @@ Statut : ⛔ = non implémenté / 🚧 = en cours / ✅ = validé
 | INT-1 | Export .png | Sauvegarde des graphiques au format image | Plotly `write_image()` / st.download_button | `app/components/exports.py` | ✅ | |
 | INT-2 | Export .csv | Export des données filtrées | st.download_button(csv) | `app/components/exports.py` | ✅ | |
 | INT-3 | Page Prédiction | Estimation DPE (classification) + conso (régression) | Pipeline sklearn + Streamlit UI | `app/pages/prediction.py` | ✅ | |
-| INT-4 | Déploiement web | Application hébergée sur Render / Heroku / Shiny | Render (Procfile + runtime.txt) | `Procfile`, `runtime.txt` | 🚧 | [lien public]( https://greentech-streamlit.onrender.com) |
+| INT-4 | Déploiement web | Application hébergée sur Render / Heroku / Shiny | Render (Procfile + runtime.txt) | `Procfile`, `runtime.txt` | 🚧 | [lien public](https://greentech-streamlit.onrender.com) |
 | INT-5 | OpenData enrichissement | Ajout variable externe (température, météo...) | API Meteo-France / ADEME | `streamlit/data/enedis_69.csv` | ✅ | |
 | INT-6 | Documentation complète | Technique (≤2p), Fonctionnelle (≤2p), ML (4–6p) | Markdown dans `/docs` | `docs/*` | ✅ | [docs](https://github.com/Modou010/m2_enedis/tree/main/docs) |
 
@@ -70,5 +70,6 @@ Statut : ⛔ = non implémenté / 🚧 = en cours / ✅ = validé
 
 
 > **Dernière mise à jour** : 02/11/2025  
+
 
 
