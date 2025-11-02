@@ -18,15 +18,15 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
-# Copier tout le code de l'application
+# Copier tout le code de l'application Streamlit
 COPY . .
 
 # Créer les dossiers nécessaires avec les bonnes permissions
 RUN mkdir -p data models logs && \
     chmod -R 755 data models logs
 
-# Exposer les ports
-EXPOSE 8501 8000
+# Exposer le port Streamlit
+EXPOSE 8501
 
 # Variables d'environnement
 ENV PYTHONUNBUFFERED=1 \
@@ -35,12 +35,9 @@ ENV PYTHONUNBUFFERED=1 \
     STREAMLIT_SERVER_HEADLESS=true \
     STREAMLIT_BROWSER_GATHER_USAGE_STATS=false
 
-# Copier et rendre exécutable le script de démarrage
-COPY docker-entrypoint.sh /docker-entrypoint.sh
-RUN chmod +x /docker-entrypoint.sh
-
 # Healthcheck pour Streamlit
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl -f http://localhost:8501/_stcore/health || exit 1
 
-ENTRYPOINT ["/docker-entrypoint.sh"]
+# Démarrer Streamlit
+CMD ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]

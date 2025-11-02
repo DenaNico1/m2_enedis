@@ -2,13 +2,33 @@ from pages.about import footer
 import streamlit as st
 from pages import welcome, home, analysis, about, enedis, prediction, api_interface, refresh_data, retrain_models
 
-# --- Configuration de la page ---
+import requests
+import os
+
+# --- Configuration de la page (UNE SEULE FOIS, EN PREMIER) ---
 st.set_page_config(
     page_title="GreenTech Solutions Rhône - Dashboard Énergétique",
     page_icon="🌿",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
+
+# Configuration de l'URL de l'API
+API_URL = os.getenv("API_URL", "http://localhost:8000")
+
+# Test de connexion à l'API
+try:
+    response = requests.get(f"{API_URL}/health", timeout=5)
+    if response.status_code == 200:
+        st.sidebar.success("✅ API connectée")
+        data = response.json()
+        if data.get("status") == "degraded":
+            st.sidebar.warning("⚠️ Modèles non chargés dans l'API")
+    else:
+        st.sidebar.warning(f"⚠️ API status: {response.status_code}")
+except Exception as e:
+    st.sidebar.error(f"❌ API non disponible")
+    st.sidebar.info(f"URL testée: {API_URL}")
 
 # --- Pages disponibles ---
 PAGES = ["Accueil", "Contexte", "Analyse", "Enedis", "Prédiction", "API", "Refresh", "Train", "À propos"]
