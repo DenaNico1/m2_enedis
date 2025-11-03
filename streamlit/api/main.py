@@ -9,10 +9,8 @@ import sys
 from datetime import datetime
 
 # Ajouter le chemin parent pour importer les utils
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from utils.model_trainer import ModelTrainer
 from utils.data_refresher import DataRefresher
-
 
 # Initialiser FastAPI UNE SEULE FOIS
 app = FastAPI(
