@@ -30,36 +30,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# === ENDPOINTS DE BASE (déjà bien placés) ===
-
-@app.get("/")
-def read_root():
-    return {
-        "message": "GreenTech Solutions - API DPE",
-        "version": "1.0.0",
-        "status": "ok",
-        "docs": "/docs",
-        "endpoints": {
-            "health": "/health",
-            "predict": "/predict",
-            "predict_batch": "/predict/batch",
-            "metrics": "/models/metrics",
-            "refresh_data": "/data/refresh",
-            "retrain": "/models/retrain"
-        }
-    }
-
-@app.get("/health")
-def health_check():
-    """Vérifier l'état de l'API"""
-    models_loaded = classifier is not None and regressor is not None
-    
-    return {
-        "status": "healthy" if models_loaded else "degraded",
-        "models_loaded": models_loaded,
-        "timestamp": datetime.now().isoformat()
-    }
-
 
 
 # === SCHEMAS PYDANTIC ===
